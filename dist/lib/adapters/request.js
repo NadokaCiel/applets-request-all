@@ -81,7 +81,7 @@ function request(config) {
     }
     function getReqConfig(originalConfig) {
         var tmpConfig = utils_1.merge({}, originalConfig);
-        tmpConfig.headers = originalConfig.header;
+        tmpConfig.headers = originalConfig.headers;
         delete tmpConfig.header;
         delete tmpConfig.Adapter;
         return tmpConfig;

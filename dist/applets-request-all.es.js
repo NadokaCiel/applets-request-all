@@ -232,7 +232,7 @@ function request(config) {
     }
     function getReqConfig$1(originalConfig) {
         var tmpConfig = merge({}, originalConfig);
-        tmpConfig.headers = originalConfig.header;
+        tmpConfig.headers = originalConfig.headers;
         delete tmpConfig.header;
         delete tmpConfig.Adapter;
         return tmpConfig;
