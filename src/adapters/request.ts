@@ -89,7 +89,7 @@ export default function request(
     originalConfig: IAppletsRequest.IHttpConfig
   ): IAppletsRequest.IHttpConfig {
     const tmpConfig: any = merge({}, originalConfig);
-    tmpConfig.headers = originalConfig.header;
+    tmpConfig.headers = originalConfig.headers;
     delete tmpConfig.header;
     delete tmpConfig.Adapter;
     return tmpConfig;
