@@ -1,6 +1,6 @@
 {
   "name": "applets-request-all",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "mini program axios request wechat weapp alipay",
   "main": "dist/applets-request-all.min.js",
   "module": "dist/applets-request-all.es.js",
