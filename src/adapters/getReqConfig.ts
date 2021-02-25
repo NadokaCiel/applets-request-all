@@ -1,13 +1,12 @@
-import { isUndefined } from "../helpers/utils";
 import weappConfig from "./wechat/config";
 import alipayConfig from "./alipay/config";
 
 export default function getReqConfig(config: IAppletsRequest.IHttpConfig): any {
-  if (!isUndefined(wx)) {
+  if (typeof wx !== "undefined") {
     return weappConfig(config);
   }
 
-  if (!isUndefined(my)) {
+  if (typeof my !== "undefined") {
     return alipayConfig(config);
   }
   return config;

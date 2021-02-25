@@ -1,7 +1,7 @@
-import { getGlobal, isUndefined } from "../helpers/utils";
+import { getGlobal } from "../helpers/utils";
 
 export default function getRequestAdapter(): any {
-  if (!isUndefined(wx) || !isUndefined(my)) {
+  if (typeof wx !== "undefined" || typeof my !== "undefined") {
     return getGlobal().request;
   }
 

@@ -92,19 +92,19 @@ export function forEach(obj: any, fn: IAppletsRequest.IEmptyFN): void {
 }
 
 export function getGlobal(): any {
-  if (!isUndefined(wx)) {
+  if (typeof wx !== "undefined") {
     return wx;
   }
 
-  if (!isUndefined(my)) {
+  if (typeof my !== "undefined") {
     return my;
   }
 
-  if (!isUndefined(swan)) {
+  if (typeof swan !== "undefined") {
     return swan;
   }
 
-  if (!isUndefined(tt)) {
+  if (typeof tt !== "undefined") {
     return tt;
   }
 
