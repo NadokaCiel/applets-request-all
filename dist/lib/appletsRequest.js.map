@@ -1,1 +1,1 @@
-{"version":3,"file":"appletsRequest.js","sourceRoot":"","sources":["../../src/appletsRequest.ts"],"names":[],"mappings":";;AAAA,mDAA6C;AAE7C,kBAAe,yBAAc,CAAC"}
+{"version":3,"file":"appletsRequest.js","sourceRoot":"","sources":["../../src/appletsRequest.ts"],"names":[],"mappings":";;;AAAA,mDAIyB;AAOE,+FAVzB,gCAAc,OAUyB;AAEA,6GAXvC,8CAA4B,OAWuC;AARrE,uCAAoC;AAEpC,yBAAc,CAAC,QAAQ,CAAC,OAAO,GAAG,kBAAU,CAAC;AAE7C,kBAAe,yBAAc,CAAC;AAM9B,SAAgB,WAAW;IACzB,IAAM,QAAQ,GAAG,6BAAyB,EAAE,CAAC;IAC7C,QAAQ,CAAC,OAAO,GAAG,kBAAU,CAAC;IAE9B,OAAO,QAAQ,CAAC;AAClB,CAAC;AALD,kCAKC"}
