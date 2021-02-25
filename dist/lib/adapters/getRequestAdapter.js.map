@@ -1,0 +1,1 @@
+{"version":3,"file":"getRequestAdapter.js","sourceRoot":"","sources":["../../../src/adapters/getRequestAdapter.ts"],"names":[],"mappings":";;AAAA,0CAA0D;AAE1D,SAAwB,iBAAiB;IACvC,IAAI,CAAC,mBAAW,CAAC,EAAE,CAAC,IAAI,CAAC,mBAAW,CAAC,EAAE,CAAC,EAAE;QACxC,OAAO,iBAAS,EAAE,CAAC,OAAO,CAAC;KAC5B;IAED,MAAM,IAAI,SAAS,CAAC,uBAAuB,CAAC,CAAC;AAC/C,CAAC;AAND,oCAMC"}

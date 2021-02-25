@@ -9,3 +9,4 @@ export declare function isString(val: any): boolean;
  * @param fn
  */
 export declare function forEach(obj: any, fn: IAppletsRequest.IEmptyFN): void;
+export declare function getGlobal(): any;

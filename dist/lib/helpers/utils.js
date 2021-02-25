@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.forEach = exports.isString = exports.merge = exports.isUndefined = exports.assign = exports.isPlainObject = void 0;
+exports.getGlobal = exports.forEach = exports.isString = exports.merge = exports.isUndefined = exports.assign = exports.isPlainObject = void 0;
 function getDataType(val) {
     return Object.prototype.toString.call(val);
 }
@@ -90,4 +90,20 @@ function forEach(obj, fn) {
     });
 }
 exports.forEach = forEach;
+function getGlobal() {
+    if (!isUndefined(wx)) {
+        return wx;
+    }
+    if (!isUndefined(my)) {
+        return my;
+    }
+    if (!isUndefined(swan)) {
+        return swan;
+    }
+    if (!isUndefined(tt)) {
+        return tt;
+    }
+    throw new TypeError("Unrecognized Platform");
+}
+exports.getGlobal = getGlobal;
 //# sourceMappingURL=utils.js.map

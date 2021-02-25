@@ -90,3 +90,23 @@ export function forEach(obj: any, fn: IAppletsRequest.IEmptyFN): void {
     fn.call(null, arr[key], key, arr);
   });
 }
+
+export function getGlobal(): any {
+  if (!isUndefined(wx)) {
+    return wx;
+  }
+
+  if (!isUndefined(my)) {
+    return my;
+  }
+
+  if (!isUndefined(swan)) {
+    return swan;
+  }
+
+  if (!isUndefined(tt)) {
+    return tt;
+  }
+
+  throw new TypeError("Unrecognized Platform");
+}

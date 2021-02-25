@@ -1,11 +1,7 @@
-import { isUndefined } from "../helpers/utils";
-import weappRequest from "./wechat/request";
+import request from "./request";
 
 export default function getAdapter(
   config: IAppletsRequest.IHttpConfig
 ): IAppletsRequestPromise {
-  if (!isUndefined(wx)) {
-    return weappRequest(config);
-  }
-  throw new TypeError("Unrecognized Platform");
+  return request(config);
 }

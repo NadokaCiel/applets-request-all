@@ -1,6 +1,32 @@
 import appletsRequest, { getDefaults as getDefaults$1 } from 'applets-request';
 export { AppletsRequest, createAppletsRequestInstance, default } from 'applets-request';
 
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+
+var __assign = function() {
+    __assign = Object.assign || function __assign(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+
 function getDataType(val) {
     return Object.prototype.toString.call(val);
 }
@@ -72,32 +98,21 @@ function forEach(obj, fn) {
         fn.call(null, arr[key], key, arr);
     });
 }
-
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-
-var __assign = function() {
-    __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
+function getGlobal() {
+    if (!isUndefined(wx)) {
+        return wx;
+    }
+    if (!isUndefined(my)) {
+        return my;
+    }
+    if (!isUndefined(swan)) {
+        return swan;
+    }
+    if (!isUndefined(tt)) {
+        return tt;
+    }
+    throw new TypeError("Unrecognized Platform");
+}
 
 function getRequestOptions(config) {
     var reqConfig = {
@@ -116,11 +131,45 @@ function getRequestOptions(config) {
     return reqConfig;
 }
 
+function getRequestOptions$1(config) {
+    var reqConfig = {
+        url: config.url || "",
+        method: config.method,
+        data: config.data,
+        headers: config.headers,
+        dataType: "json",
+        timeout: config.timeout,
+    };
+    var dataType = config.dataType || "json";
+    reqConfig.dataType = dataType;
+    if (config.responseType && config.responseType !== "json") {
+        reqConfig.dataType = "其他";
+    }
+    return reqConfig;
+}
+
+function getReqConfig(config) {
+    if (!isUndefined(wx)) {
+        return getRequestOptions(config);
+    }
+    if (!isUndefined(my)) {
+        return getRequestOptions$1(config);
+    }
+    return config;
+}
+
+function getRequestAdapter() {
+    if (!isUndefined(wx) || !isUndefined(my)) {
+        return getGlobal().request;
+    }
+    throw new TypeError("Unrecognized Platform");
+}
+
 /*
  * @Author: youzhao.zhou
  * @Date: 2021-02-04 16:09:10
  * @Last Modified by: youzhao.zhou
- * @Last Modified time: 2021-02-25 12:06:32
+ * @Last Modified time: 2021-02-25 14:02:38
  * @Description request adapter
  *
  * 1. 执行成功需要返回IAppletsRequestResponse，执行失败即为reject返回IAppletsRequestAdapterError
@@ -181,7 +230,7 @@ function request(config) {
             return data;
         }
     }
-    function getReqConfig(originalConfig) {
+    function getReqConfig$1(originalConfig) {
         var tmpConfig = merge({}, originalConfig);
         tmpConfig.headers = originalConfig.header;
         delete tmpConfig.header;
@@ -190,13 +239,13 @@ function request(config) {
     }
     return new Promise(function (resolve, reject) {
         var Adapter = config.Adapter;
-        var reqConfig = getRequestOptions(config);
-        var adapterConfig = getReqConfig(config);
+        var reqConfig = getReqConfig(config);
+        var adapterConfig = getReqConfig$1(config);
         if (!Adapter) {
             throw new TypeError("Adapter is undefined or null");
         }
         var adapter = new Adapter(adapterConfig);
-        var requestor = wx.request(__assign(__assign({}, reqConfig), { success: function (res) {
+        var requestor = getRequestAdapter()(__assign(__assign({}, reqConfig), { success: function (res) {
                 adapter.resolve(requestSuccess(res), resolve);
             },
             fail: function (err) {
@@ -223,10 +272,7 @@ function request(config) {
 }
 
 function getAdapter(config) {
-    if (!isUndefined(wx)) {
-        return request(config);
-    }
-    throw new TypeError("Unrecognized Platform");
+    return request(config);
 }
 
 appletsRequest.defaults.adapter = getAdapter;

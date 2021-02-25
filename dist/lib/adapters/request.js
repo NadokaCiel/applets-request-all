@@ -3,7 +3,7 @@
  * @Author: youzhao.zhou
  * @Date: 2021-02-04 16:09:10
  * @Last Modified by: youzhao.zhou
- * @Last Modified time: 2021-02-25 12:06:32
+ * @Last Modified time: 2021-02-25 14:02:38
  * @Description request adapter
  *
  * 1. 执行成功需要返回IAppletsRequestResponse，执行失败即为reject返回IAppletsRequestAdapterError
@@ -21,8 +21,9 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../../helpers/utils");
-var config_1 = require("./config");
+var utils_1 = require("../helpers/utils");
+var getReqConfig_1 = require("./getReqConfig");
+var getRequestAdapter_1 = require("./getRequestAdapter");
 function request(config) {
     function requestSuccess(res) {
         if (utils_1.isUndefined(res) || res === null) {
@@ -87,13 +88,13 @@ function request(config) {
     }
     return new Promise(function (resolve, reject) {
         var Adapter = config.Adapter;
-        var reqConfig = config_1.default(config);
+        var reqConfig = getReqConfig_1.default(config);
         var adapterConfig = getReqConfig(config);
         if (!Adapter) {
             throw new TypeError("Adapter is undefined or null");
         }
         var adapter = new Adapter(adapterConfig);
-        var requestor = wx.request(__assign(__assign({}, reqConfig), { success: function (res) {
+        var requestor = getRequestAdapter_1.default()(__assign(__assign({}, reqConfig), { success: function (res) {
                 adapter.resolve(requestSuccess(res), resolve);
             },
             fail: function (err) {

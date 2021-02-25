@@ -2,15 +2,16 @@
  * @Author: youzhao.zhou
  * @Date: 2021-02-04 16:09:10
  * @Last Modified by: youzhao.zhou
- * @Last Modified time: 2021-02-25 12:06:32
+ * @Last Modified time: 2021-02-25 14:02:38
  * @Description request adapter
  *
  * 1. 执行成功需要返回IAppletsRequestResponse，执行失败即为reject返回IAppletsRequestAdapterError
  * 2. 如果取消返回IAppletsRequest.ICanceler
  */
 
-import { isUndefined, merge } from "../../helpers/utils";
-import getRequestOptions from "./config";
+import { isUndefined, merge } from "../helpers/utils";
+import getAdapterReqConfig from "./getReqConfig";
+import getRequestAdapter from "./getRequestAdapter";
 
 interface IResolveOptions {
   headers: Record<string, any>;
@@ -96,7 +97,7 @@ export default function request(
 
   return new Promise((resolve, reject) => {
     const Adapter = config.Adapter;
-    const reqConfig = getRequestOptions(config);
+    const reqConfig = getAdapterReqConfig(config);
     const adapterConfig = getReqConfig(config);
 
     if (!Adapter) {
@@ -105,7 +106,7 @@ export default function request(
 
     const adapter = new Adapter(adapterConfig);
 
-    let requestor = wx.request({
+    let requestor = getRequestAdapter()({
       ...reqConfig,
       success(res: any) {
         adapter.resolve(requestSuccess(res), resolve);
