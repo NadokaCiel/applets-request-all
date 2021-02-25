@@ -99,16 +99,16 @@ function forEach(obj, fn) {
     });
 }
 function getGlobal() {
-    if (!isUndefined(wx)) {
+    if (typeof wx !== "undefined") {
         return wx;
     }
-    if (!isUndefined(my)) {
+    if (typeof my !== "undefined") {
         return my;
     }
-    if (!isUndefined(swan)) {
+    if (typeof swan !== "undefined") {
         return swan;
     }
-    if (!isUndefined(tt)) {
+    if (typeof tt !== "undefined") {
         return tt;
     }
     throw new TypeError("Unrecognized Platform");
@@ -149,17 +149,17 @@ function getRequestOptions$1(config) {
 }
 
 function getReqConfig(config) {
-    if (!isUndefined(wx)) {
+    if (typeof wx !== "undefined") {
         return getRequestOptions(config);
     }
-    if (!isUndefined(my)) {
+    if (typeof my !== "undefined") {
         return getRequestOptions$1(config);
     }
     return config;
 }
 
 function getRequestAdapter() {
-    if (!isUndefined(wx) || !isUndefined(my)) {
+    if (typeof wx !== "undefined" || typeof my !== "undefined") {
         return getGlobal().request;
     }
     throw new TypeError("Unrecognized Platform");

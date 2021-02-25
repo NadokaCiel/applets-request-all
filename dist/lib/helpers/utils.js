@@ -91,16 +91,16 @@ function forEach(obj, fn) {
 }
 exports.forEach = forEach;
 function getGlobal() {
-    if (!isUndefined(wx)) {
+    if (typeof wx !== "undefined") {
         return wx;
     }
-    if (!isUndefined(my)) {
+    if (typeof my !== "undefined") {
         return my;
     }
-    if (!isUndefined(swan)) {
+    if (typeof swan !== "undefined") {
         return swan;
     }
-    if (!isUndefined(tt)) {
+    if (typeof tt !== "undefined") {
         return tt;
     }
     throw new TypeError("Unrecognized Platform");
