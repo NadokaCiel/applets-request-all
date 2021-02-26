@@ -309,14 +309,13 @@ appletsRequest("/user/12345");
 When using then, you will receive the response as follows:
 
 ```javascript
-appletsRequest.get('/user/12345')
-  .then(function (response) {
-    console.log(response.data);
-    console.log(response.status);
-    console.log(response.headers);
-    console.log(response.config);
-    console.log(response.originalRes);
-  });
+appletsRequest.get("/user/12345").then(function (response) {
+  console.log(response.data);
+  console.log(response.status);
+  console.log(response.headers);
+  console.log(response.config);
+  console.log(response.originalRes);
+});
 ```
 
 ## Handling Errors
@@ -346,18 +345,192 @@ appletsRequest.get('/user/12345')
 ```
 
 ```javascript
-appletsRequest.get('/user/12345')
-  .catch(function (error) {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.log('Error', error.errMsg);
-    }
-    console.log(error.config);
-  });
+appletsRequest.get("/user/12345").catch(function (error) {
+  if (error.response) {
+    // The request was made and the server responded with a status code
+    // that falls out of the range of 2xx
+    console.log(error.response.data);
+    console.log(error.response.status);
+    console.log(error.response.headers);
+  } else {
+    // Something happened in setting up the request that triggered an Error
+    console.log("Error", error.errMsg);
+  }
+  console.log(error.config);
+});
 ```
+
+## Config Defaults
+
+修改默认配置，将会在当前的`appletsRequest`实例中的所有请求生效，`defaults`中的配置优先级最低。
+
+```javascript
+appletsRequest.defaults.baseURL = "https://api.example.com";
+appletsRequest.defaults.headers.common["Authorization"] = AUTH_TOKEN;
+appletsRequest.defaults.headers.post["Content-Type"] =
+  "application/x-www-form-urlencoded";
+```
+
+### Create New Instance
+
+```javascript
+// Set config defaults when creating the instance
+const instance = appletsRequest.create({
+  baseURL: "https://api.example.com",
+});
+
+// Alter defaults after instance has been created
+instance.defaults.headers.common["Authorization"] = AUTH_TOKEN;
+```
+
+### Override Defaults
+
+`defaults`中的配置优先级最低，单个请求的`config`将会覆盖`defaults`中的值
+
+```javascript
+// Create an instance using the config defaults provided by the library
+// At this point the timeout config value is `0` as is the default for the library
+const instance = appletsRequest.create();
+
+// Override timeout default for the library
+// Now all requests using this instance will wait 2.5 seconds before timing out
+instance.defaults.timeout = 2500;
+
+// Override timeout for this request as it's known to take a long time
+instance.get("/longRequest", {
+  timeout: 5000,
+});
+```
+
+## Interceptors
+
+You can intercept requests or responses before they are handled by `then` or `catch`.
+
+```javascript
+// Add a request interceptor
+appletsRequest.interceptors.request.use(
+  function (config) {
+    // Do something before request is sent
+    return config;
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  },
+);
+
+// Add a response interceptor
+appletsRequest.interceptors.response.use(
+  function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    return response;
+  },
+  function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    return Promise.reject(error);
+  },
+);
+```
+
+If you need to remove an interceptor later you can.
+
+```javascript
+const myInterceptor = appletsRequest.interceptors.request.use(function () {
+  /*...*/
+});
+appletsRequest.interceptors.request.eject(myInterceptor);
+```
+
+You can add interceptors to a custom instance of appletsRequest.
+
+```javascript
+const instance = appletsRequest.create();
+instance.interceptors.request.use(function () {
+  /*...*/
+});
+```
+
+## Cancellation
+
+You can cancel a request using a _cancel token_.
+
+> The appletsRequest cancel token API is based on the withdrawn [cancelable promises proposal](https://github.com/tc39/proposal-cancelable-promises).
+
+You can create a cancel token using the `CancelToken.source` factory as shown below:
+
+```js
+const CancelToken = appletsRequest.CancelToken;
+const source = CancelToken.source();
+
+appletsRequest
+  .get("/user/12345", {
+    cancelToken: source.token,
+  })
+  .catch(function (thrown) {
+    if (appletsRequest.isCancel(thrown)) {
+      console.log("Request canceled", thrown.message);
+    } else {
+      // handle error
+    }
+  });
+
+appletsRequest.post(
+  "/user/12345",
+  {
+    name: "new name",
+  },
+  {
+    cancelToken: source.token,
+  },
+);
+
+// cancel the request (the message parameter is optional)
+source.cancel("Operation canceled by the user.");
+```
+
+You can create a cancel token using `new CancelToken` as shown below:
+
+```js
+const cancelToken = new appletsRequest.CancelToken();
+
+appletsRequest
+  .get("/user/12345", {
+    cancelToken: cancelToken,
+  })
+  .catch(function (thrown) {
+    if (appletsRequest.isCancel(thrown)) {
+      console.log("Request canceled", thrown.message);
+    } else {
+      // handle error
+    }
+  });
+
+// cancel the request (the message parameter is optional)
+cancelToken.cancel("Operation canceled by the user.");
+```
+
+You can also create a cancel token by passing an executor function to the `CancelToken` constructor:
+
+```js
+const CancelToken = appletsRequest.CancelToken;
+let cancel;
+
+appletsRequest.get("/user/12345", {
+  cancelToken: new CancelToken(function executor(c) {
+    // An executor function receives a cancel function as a parameter
+    cancel = c;
+  }),
+});
+
+// cancel the request
+cancel();
+```
+
+> Note: you can cancel several requests with the same cancel token.
+> Note: 同一 cancelToken 只能使用一次，也就是执行了`cancelToken.cancel(message)`,`cancelToken`就处于`cancel`状态。需要重新创建`cancelToken`对象
+
+## License
+
+[MIT](LICENSE)
