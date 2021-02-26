@@ -68,7 +68,7 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
-    "applets-request": "^1.0.10"
+    "applets-request": "^1.0.11"
   },
   "lint-staged": {
     "{src,test}/**/*.ts": [
