@@ -190,8 +190,8 @@ function requestSuccess(res) {
         };
     }
     return {
-        headers: res.headers,
-        status: res.status,
+        headers: res.header,
+        status: res.statusCode,
         data: dataParser(res.data),
         response: res,
     };
@@ -207,8 +207,8 @@ function requestSuccess$1(res) {
         };
     }
     return {
-        headers: res.header,
-        status: res.statusCode,
+        headers: res.headers,
+        status: res.status,
         data: dataParser(res.data),
         response: res,
     };

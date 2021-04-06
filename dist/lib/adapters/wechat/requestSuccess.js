@@ -11,8 +11,8 @@ function requestSuccess(res) {
         };
     }
     return {
-        headers: res.headers,
-        status: res.status,
+        headers: res.header,
+        status: res.statusCode,
         data: utils_1.dataParser(res.data),
         response: res,
     };
