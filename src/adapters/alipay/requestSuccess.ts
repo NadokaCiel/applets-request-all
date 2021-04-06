@@ -18,8 +18,8 @@ export default function requestSuccess(res: any): IResolveOptions {
   }
 
   return {
-    headers: res.header,
-    status: res.statusCode,
+    headers: res.headers,
+    status: res.status,
     data: dataParser(res.data),
     response: res,
   };

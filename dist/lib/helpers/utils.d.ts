@@ -10,3 +10,8 @@ export declare function isString(val: any): boolean;
  */
 export declare function forEach(obj: any, fn: IAppletsRequest.IEmptyFN): void;
 export declare function getGlobal(): any;
+/**
+ * JSON parse data
+ * @param data
+ */
+export declare function dataParser(data: any): any;

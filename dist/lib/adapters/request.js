@@ -24,23 +24,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../helpers/utils");
 var getReqConfig_1 = require("./getReqConfig");
 var getRequestAdapter_1 = require("./getRequestAdapter");
+var getRequestSuccess_1 = require("./getRequestSuccess");
 function request(config) {
-    function requestSuccess(res) {
-        if (utils_1.isUndefined(res) || res === null) {
-            return {
-                headers: {},
-                status: 200,
-                data: {},
-                response: res,
-            };
-        }
-        return {
-            headers: res.header,
-            status: res.statusCode,
-            data: dataParser(res.data),
-            response: res,
-        };
-    }
     /**
      * 获取错误类型
      * @param err
@@ -64,21 +49,6 @@ function request(config) {
             type: "NETWORK_ERROR",
         };
     }
-    /**
-     * JSON parse data
-     * @param data
-     */
-    function dataParser(data) {
-        if (typeof data !== "string") {
-            return data;
-        }
-        try {
-            return JSON.parse(data);
-        }
-        catch (e) {
-            return data;
-        }
-    }
     function getReqConfig(originalConfig) {
         var tmpConfig = utils_1.merge({}, originalConfig);
         tmpConfig.headers = originalConfig.headers;
@@ -95,7 +65,7 @@ function request(config) {
         }
         var adapter = new Adapter(adapterConfig);
         var requestor = getRequestAdapter_1.default()(__assign(__assign({}, reqConfig), { success: function (res) {
-                adapter.resolve(requestSuccess(res), resolve);
+                adapter.resolve(getRequestSuccess_1.default(res), resolve);
             },
             fail: function (err) {
                 var errData = failType(err, reqConfig.timeout);

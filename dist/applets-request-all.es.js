@@ -113,6 +113,21 @@ function getGlobal() {
     }
     throw new TypeError("Unrecognized Platform");
 }
+/**
+ * JSON parse data
+ * @param data
+ */
+function dataParser(data) {
+    if (typeof data !== "string") {
+        return data;
+    }
+    try {
+        return JSON.parse(data);
+    }
+    catch (e) {
+        return data;
+    }
+}
 
 function getRequestOptions(config) {
     var reqConfig = {
@@ -165,6 +180,50 @@ function getRequestAdapter() {
     throw new TypeError("Unrecognized Platform");
 }
 
+function requestSuccess(res) {
+    if (isUndefined(res) || res === null) {
+        return {
+            headers: {},
+            status: 200,
+            data: {},
+            response: res,
+        };
+    }
+    return {
+        headers: res.headers,
+        status: res.status,
+        data: dataParser(res.data),
+        response: res,
+    };
+}
+
+function requestSuccess$1(res) {
+    if (isUndefined(res) || res === null) {
+        return {
+            headers: {},
+            status: 200,
+            data: {},
+            response: res,
+        };
+    }
+    return {
+        headers: res.header,
+        status: res.statusCode,
+        data: dataParser(res.data),
+        response: res,
+    };
+}
+
+function getRequestSuccess(requestRes) {
+    if (typeof wx !== "undefined") {
+        return requestSuccess(requestRes);
+    }
+    if (typeof my !== "undefined") {
+        return requestSuccess$1(requestRes);
+    }
+    return requestRes;
+}
+
 /*
  * @Author: youzhao.zhou
  * @Date: 2021-02-04 16:09:10
@@ -176,22 +235,6 @@ function getRequestAdapter() {
  * 2. 如果取消返回IAppletsRequest.ICanceler
  */
 function request(config) {
-    function requestSuccess(res) {
-        if (isUndefined(res) || res === null) {
-            return {
-                headers: {},
-                status: 200,
-                data: {},
-                response: res,
-            };
-        }
-        return {
-            headers: res.header,
-            status: res.statusCode,
-            data: dataParser(res.data),
-            response: res,
-        };
-    }
     /**
      * 获取错误类型
      * @param err
@@ -215,21 +258,6 @@ function request(config) {
             type: "NETWORK_ERROR",
         };
     }
-    /**
-     * JSON parse data
-     * @param data
-     */
-    function dataParser(data) {
-        if (typeof data !== "string") {
-            return data;
-        }
-        try {
-            return JSON.parse(data);
-        }
-        catch (e) {
-            return data;
-        }
-    }
     function getReqConfig$1(originalConfig) {
         var tmpConfig = merge({}, originalConfig);
         tmpConfig.headers = originalConfig.headers;
@@ -246,7 +274,7 @@ function request(config) {
         }
         var adapter = new Adapter(adapterConfig);
         var requestor = getRequestAdapter()(__assign(__assign({}, reqConfig), { success: function (res) {
-                adapter.resolve(requestSuccess(res), resolve);
+                adapter.resolve(getRequestSuccess(res), resolve);
             },
             fail: function (err) {
                 var errData = failType(err, reqConfig.timeout);
