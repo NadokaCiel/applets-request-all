@@ -74,5 +74,8 @@
     "{src,test}/**/*.ts": [
       "prettier --write"
     ]
+  },
+  "peerDependencies": {
+    "applets-request": ">=1.0.11"
   }
 }

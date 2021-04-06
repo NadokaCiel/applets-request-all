@@ -110,3 +110,18 @@ export function getGlobal(): any {
 
   throw new TypeError("Unrecognized Platform");
 }
+
+/**
+ * JSON parse data
+ * @param data
+ */
+export function dataParser(data: any): any {
+  if (typeof data !== "string") {
+    return data;
+  }
+  try {
+    return JSON.parse(data);
+  } catch (e) {
+    return data;
+  }
+}

@@ -9,38 +9,14 @@
  * 2. 如果取消返回IAppletsRequest.ICanceler
  */
 
-import { isUndefined, merge } from "../helpers/utils";
+import { merge } from "../helpers/utils";
 import getAdapterReqConfig from "./getReqConfig";
 import getRequestAdapter from "./getRequestAdapter";
-
-interface IResolveOptions {
-  headers: Record<string, any>;
-  status: number;
-  data: any;
-  response?: any;
-}
+import getRequestSuccess from "./getRequestSuccess";
 
 export default function request(
   config: IAppletsRequest.IHttpConfig
 ): IAppletsRequestPromise {
-  function requestSuccess(res: any): IResolveOptions {
-    if (isUndefined(res) || res === null) {
-      return {
-        headers: {},
-        status: 200,
-        data: {},
-        response: res,
-      };
-    }
-
-    return {
-      headers: res.header,
-      status: res.statusCode,
-      data: dataParser(res.data),
-      response: res,
-    };
-  }
-
   /**
    * 获取错误类型
    * @param err
@@ -70,21 +46,6 @@ export default function request(
     };
   }
 
-  /**
-   * JSON parse data
-   * @param data
-   */
-  function dataParser(data: any): any {
-    if (typeof data !== "string") {
-      return data;
-    }
-    try {
-      return JSON.parse(data);
-    } catch (e) {
-      return data;
-    }
-  }
-
   function getReqConfig(
     originalConfig: IAppletsRequest.IHttpConfig
   ): IAppletsRequest.IHttpConfig {
@@ -109,7 +70,7 @@ export default function request(
     let requestor = getRequestAdapter()({
       ...reqConfig,
       success(res: any) {
-        adapter.resolve(requestSuccess(res), resolve);
+        adapter.resolve(getRequestSuccess(res), resolve);
       },
       fail(err: any) {
         const errData = failType(err, reqConfig.timeout);
