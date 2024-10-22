@@ -5,6 +5,7 @@ export default function getRequestOptions(
     url: config.url || "",
     method: config.method,
     data: config.data,
+    params: config.params,
     headers: config.headers,
     dataType: "json",
     timeout: config.timeout,
