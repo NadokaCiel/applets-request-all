@@ -163,6 +163,30 @@ function getRequestOptions$1(config) {
     return reqConfig;
 }
 
+function getRequestOptions$2(config) {
+    var reqConfig = {
+        url: config.url || "",
+        method: config.method,
+        data: config.data,
+        headers: config.headers,
+        dataType: "json",
+        timeout: config.timeout,
+    };
+    var dataType = config.dataType || "json";
+    reqConfig.dataType = dataType;
+    if (config.responseType && config.responseType !== "json") {
+        reqConfig.dataType = "其他";
+    }
+    return reqConfig;
+}
+
+/*
+ * @Author: youzhao.zhou
+ * @Date: 2021-10-19 10:37:01
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2024-10-22 16:23:48
+ * @Description 获取不同平台的http请求接口的配置
+ */
 function getReqConfig(config) {
     if (typeof wx !== "undefined") {
         return getRequestOptions(config);
@@ -170,12 +194,25 @@ function getReqConfig(config) {
     if (typeof my !== "undefined") {
         return getRequestOptions$1(config);
     }
+    if (typeof window !== "undefined") {
+        return getRequestOptions$2(config);
+    }
     return config;
 }
 
+/*
+ * @Author: youzhao.zhou
+ * @Date: 2021-10-19 10:37:50
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2024-10-22 16:23:51
+ * @Description 获取不同平台http请求的接口方法
+ */
 function getRequestAdapter() {
     if (typeof wx !== "undefined" || typeof my !== "undefined") {
         return getGlobal().request;
+    }
+    if (typeof window !== "undefined") {
+        return fetch;
     }
     throw new TypeError("Unrecognized Platform");
 }
@@ -214,12 +251,39 @@ function requestSuccess$1(res) {
     };
 }
 
+function requestSuccess$2(res) {
+    if (isUndefined(res) || res === null) {
+        return {
+            headers: {},
+            status: 200,
+            data: {},
+            response: res,
+        };
+    }
+    return {
+        headers: res.headers,
+        status: res.status,
+        data: dataParser(res.data),
+        response: res,
+    };
+}
+
+/*
+ * @Author: youzhao.zhou
+ * @Date: 2021-10-19 10:38:26
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2024-10-22 16:24:40
+ * @Description 获取不同平台处理http返回值的处理对象
+ */
 function getRequestSuccess(requestRes) {
     if (typeof wx !== "undefined") {
         return requestSuccess(requestRes);
     }
     if (typeof my !== "undefined") {
         return requestSuccess$1(requestRes);
+    }
+    if (typeof window !== "undefined") {
+        return requestSuccess$2(requestRes);
     }
     return requestRes;
 }
